@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: nullclaw
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://YOUR-FREELLM-API-HOST/v1
+      - key: LLM_MODEL
+        value: YOUR_MODEL_ID
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_USER_ID
+        sync: false
+      - key: FILESLINK_UPLOAD_URL
+        value: https://YOUR-FILESLINK-SERVICE.onrender.com/api/files/upload
+      - key: FILESLINK_UPLOAD_TOKEN
+        sync: false
+      - key: FILESLINK_BACKUP_URL
+        sync: false
+      - key: FILESLINK_BACKUP_INTERVAL_SECONDS
+        value: "900"
+      - key: NULLCLAW_BIND
+        value: 0.0.0.0
+      - key: NULLCLAW_HOME
+        value: /nullclaw-data

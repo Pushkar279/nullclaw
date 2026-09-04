@@ -77,7 +77,7 @@ FROM alpine:3.23 AS release-base
 
 LABEL org.opencontainers.image.source=https://github.com/nullclaw/nullclaw
 
-RUN apk add --no-cache ca-certificates curl git tzdata
+RUN apk add --no-cache ca-certificates curl git jq tzdata
 
 COPY --from=builder /app/zig-out/bin/nullclaw /usr/local/bin/nullclaw
 COPY --from=config /nullclaw-data /nullclaw-data
@@ -87,11 +87,14 @@ ENV NULLCLAW_HOME=/nullclaw-data
 ENV HOME=/nullclaw-data
 ENV SHELL=/bin/sh
 ENV NULLCLAW_GATEWAY_PORT=3000
+ENV PORT=10000
 
 WORKDIR /nullclaw-data
-EXPOSE 3000
-ENTRYPOINT ["nullclaw"]
-CMD ["gateway", "--port", "3000", "--host", "::"]
+EXPOSE 10000
+COPY render-entrypoint.sh /usr/local/bin/render-entrypoint.sh
+RUN chmod 755 /usr/local/bin/render-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/render-entrypoint.sh"]
+CMD []
 
 # Optional autonomous mode (explicit opt-in):
 #   make build DOCKER_TARGET=release-root IMAGE=nullclaw:root
