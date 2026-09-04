@@ -6,7 +6,7 @@ set -eu
 : "${NULLCLAW_WORKSPACE:=$NULLCLAW_HOME/workspace}"
 : "${LLM_BASE_URL:?Set LLM_BASE_URL to your OpenAI-compatible API base, including /v1}"
 : "${LLM_PROVIDER:=custom}"
-: "${LLM_MODEL:=auto}"
+: "${LLM_MODEL:=auto:fast}"
 : "${NULLCLAW_BIND:=0.0.0.0}"
 
 mkdir -p "$NULLCLAW_HOME/workspace"
