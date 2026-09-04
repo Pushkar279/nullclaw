@@ -77,7 +77,8 @@ FROM alpine:3.23 AS release-base
 
 LABEL org.opencontainers.image.source=https://github.com/nullclaw/nullclaw
 
-RUN apk add --no-cache ca-certificates curl git jq nodejs npm tzdata
+RUN apk add --no-cache ca-certificates curl git jq nodejs npm tzdata && \
+    npm install --global --omit=dev @useclawlink/cli
 
 COPY --from=builder /app/zig-out/bin/nullclaw /usr/local/bin/nullclaw
 COPY --from=config /nullclaw-data /nullclaw-data
