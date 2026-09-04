@@ -86,7 +86,24 @@ if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
     401) echo "[render] Telegram token rejected (HTTP 401). Check TELEGRAM_BOT_TOKEN." >&2 ;;
     *) echo "[render] Telegram getMe check returned HTTP $telegram_status." >&2 ;;
   esac
+  polling_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 \
+    "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?limit=1&timeout=0" || printf '000')"
+  if [ "$polling_status" = 409 ]; then
+    echo "[render] Telegram polling conflict (HTTP 409): another service is using this bot token." >&2
+  fi
 fi
+
+# Check the configured OpenAI-compatible endpoint without sending an inference
+# request. A 200/401/403 here is useful diagnosis; the response body is never
+# logged because it can contain provider details.
+llm_models_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
+  -H "Authorization: Bearer ${LLM_API_KEY}" \
+  "${LLM_BASE_URL%/}/models" || printf '000')"
+case "$llm_models_status" in
+  200) echo "[render] Custom LLM endpoint accepted the API key." ;;
+  401|403) echo "[render] Custom LLM endpoint rejected LLM_API_KEY (HTTP $llm_models_status)." >&2 ;;
+  *) echo "[render] Custom LLM /models check returned HTTP $llm_models_status; verify LLM_BASE_URL includes /v1." >&2 ;;
+esac
 
 backup() {
   [ -n "${FILESLINK_UPLOAD_URL:-}" ] || return 0
