@@ -81,6 +81,13 @@ RUN apk add --no-cache ca-certificates curl git jq tzdata
 
 COPY --from=builder /app/zig-out/bin/nullclaw /usr/local/bin/nullclaw
 COPY --from=config /nullclaw-data /nullclaw-data
+# Docker COPY resets ownership to root even though the config-prep stage uses
+# the intended UID. Restore ownership in the final runtime image before the
+# non-root release user starts render-entrypoint.sh.
+RUN chown -R 65534:65534 /nullclaw-data && \
+    chmod 700 /nullclaw-data && \
+    chmod 700 /nullclaw-data/workspace && \
+    chmod 600 /nullclaw-data/config.json
 
 ENV NULLCLAW_WORKSPACE=/nullclaw-data/workspace
 ENV NULLCLAW_HOME=/nullclaw-data
