@@ -10,6 +10,18 @@ set -eu
 
 mkdir -p "$NULLCLAW_HOME/workspace"
 
+# If no fixed backup URL is configured, discover the newest archive by name.
+if [ -z "${FILESLINK_BACKUP_URL:-}" ] \
+    && [ -n "${FILESLINK_API_URL:-}" ] \
+    && [ -n "${FILESLINK_FILE_DOMAIN:-}" ]; then
+  latest_id="$(curl -fsSL --max-time 30 "$FILESLINK_API_URL" 2>/dev/null \
+    | jq -r '[.[] | select(.file_name == "nullclaw-backup.tar.gz")] | sort_by(.uploaded_at) | last.unique_id // empty' \
+    || true)"
+  if [ -n "$latest_id" ]; then
+    FILESLINK_BACKUP_URL="${FILESLINK_FILE_DOMAIN%/}/$latest_id"
+  fi
+fi
+
 # Restore the latest archive when a FilesLink download URL is supplied.
 if [ -n "${FILESLINK_BACKUP_URL:-}" ]; then
   tmp="$(mktemp)"

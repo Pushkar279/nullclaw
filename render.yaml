@@ -18,6 +18,10 @@ services:
         sync: false
       - key: FILESLINK_UPLOAD_URL
         value: https://YOUR-FILESLINK-SERVICE.onrender.com/api/files/upload
+      - key: FILESLINK_API_URL
+        value: https://YOUR-FILESLINK-SERVICE.onrender.com/api/files
+      - key: FILESLINK_FILE_DOMAIN
+        value: https://YOUR-FILESLINK-SERVICE.onrender.com/files
       - key: FILESLINK_UPLOAD_TOKEN
         sync: false
       - key: FILESLINK_BACKUP_URL
