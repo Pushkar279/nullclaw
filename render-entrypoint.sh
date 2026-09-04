@@ -4,7 +4,8 @@ set -eu
 : "${PORT:=10000}"
 : "${NULLCLAW_HOME:=/nullclaw-data}"
 : "${NULLCLAW_WORKSPACE:=$NULLCLAW_HOME/workspace}"
-: "${LLM_BASE_URL:=https://api.openai.com/v1}"
+: "${LLM_BASE_URL:?Set LLM_BASE_URL to your OpenAI-compatible API base, including /v1}"
+: "${LLM_PROVIDER:=openai}"
 : "${LLM_MODEL:=auto}"
 : "${NULLCLAW_BIND:=0.0.0.0}"
 
@@ -46,15 +47,16 @@ fi
 jq \
   --arg key "${LLM_API_KEY:?Set LLM_API_KEY in Render environment}" \
   --arg base "$LLM_BASE_URL" \
+  --arg provider "$LLM_PROVIDER" \
   --arg model "$LLM_MODEL" \
   --argjson port "$PORT" \
   --arg host "$NULLCLAW_BIND" \
   --arg telegram_token "${TELEGRAM_BOT_TOKEN:-}" \
   --arg telegram_user "${TELEGRAM_USER_ID:-}" \
-  '.models.providers.openai = {
+  '.models.providers[$provider] = {
       api_key: $key, base_url: $base, api_mode: "chat_completions"
     }
-   | .agents.defaults.model.primary = ("openai/" + $model)
+   | .agents.defaults.model.primary = ($provider + "/" + $model)
    | .channels.cli = true
    | .gateway = ((.gateway // {}) + {
        host: $host, port: $port, allow_public_bind: true, require_pairing: true
@@ -73,6 +75,18 @@ jq \
        })
      else . end' "$NULLCLAW_HOME/config.json" > "$NULLCLAW_HOME/config.json.tmp"
 mv "$NULLCLAW_HOME/config.json.tmp" "$NULLCLAW_HOME/config.json"
+
+# Validate the Telegram credential without printing it. HTTP 401 means the
+# token is invalid; HTTP 409 means another process is polling this same bot.
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
+  telegram_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 \
+    "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe" || printf '000')"
+  case "$telegram_status" in
+    200) echo "[render] Telegram bot token accepted." ;;
+    401) echo "[render] Telegram token rejected (HTTP 401). Check TELEGRAM_BOT_TOKEN." >&2 ;;
+    *) echo "[render] Telegram getMe check returned HTTP $telegram_status." >&2 ;;
+  esac
+fi
 
 backup() {
   [ -n "${FILESLINK_UPLOAD_URL:-}" ] || return 0
