@@ -5,7 +5,7 @@ set -eu
 : "${NULLCLAW_HOME:=/nullclaw-data}"
 : "${NULLCLAW_WORKSPACE:=$NULLCLAW_HOME/workspace}"
 : "${LLM_BASE_URL:?Set LLM_BASE_URL to your OpenAI-compatible API base, including /v1}"
-: "${LLM_PROVIDER:=openai}"
+: "${LLM_PROVIDER:=custom}"
 : "${LLM_MODEL:=auto}"
 : "${NULLCLAW_BIND:=0.0.0.0}"
 
