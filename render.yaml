@@ -17,11 +17,11 @@ services:
       - key: TELEGRAM_USER_ID
         sync: false
       - key: FILESLINK_UPLOAD_URL
-        value: https://YOUR-FILESLINK-SERVICE.onrender.com/api/files/upload
+        value: https://tcloud-2f7u.onrender.com/api/files/upload
       - key: FILESLINK_API_URL
-        value: https://YOUR-FILESLINK-SERVICE.onrender.com/api/files
+        value: https://tcloud-2f7u.onrender.com/api/files
       - key: FILESLINK_FILE_DOMAIN
-        value: https://YOUR-FILESLINK-SERVICE.onrender.com/files
+        value: https://tcloud-2f7u.onrender.com/files
       - key: FILESLINK_UPLOAD_TOKEN
         sync: false
       - key: FILESLINK_BACKUP_URL
