@@ -58,14 +58,6 @@ jq \
     }
    | .agents.defaults.model.primary = ($provider + "/" + $model)
    | .channels.cli = true
-   | .mcp_servers = ((.mcp_servers // {}) + {
-       clawlink: {
-         transport: "stdio",
-         command: "npx",
-         args: ["-y", "@useclawlink/mcp"],
-         timeout_ms: 10000
-       }
-     })
    | .gateway = ((.gateway // {}) + {
        host: $host, port: $port, allow_public_bind: true, require_pairing: true
      })
