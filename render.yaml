@@ -10,10 +10,6 @@ services:
         sync: false
       - key: LLM_BASE_URL
         sync: false
-      - key: LLM_PROVIDER
-        value: openai
-      - key: LLM_MODEL
-        value: auto
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_USER_ID
