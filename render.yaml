@@ -11,7 +11,7 @@ services:
       - key: LLM_BASE_URL
         value: https://YOUR-FREELLM-API-HOST/v1
       - key: LLM_MODEL
-        value: YOUR_MODEL_ID
+        value: auto
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_USER_ID

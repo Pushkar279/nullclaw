@@ -5,7 +5,7 @@ set -eu
 : "${NULLCLAW_HOME:=/nullclaw-data}"
 : "${NULLCLAW_WORKSPACE:=$NULLCLAW_HOME/workspace}"
 : "${LLM_BASE_URL:=https://api.openai.com/v1}"
-: "${LLM_MODEL:=gpt-4o-mini}"
+: "${LLM_MODEL:=auto}"
 : "${NULLCLAW_BIND:=0.0.0.0}"
 
 mkdir -p "$NULLCLAW_HOME/workspace"
